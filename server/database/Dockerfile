@@ -4,12 +4,9 @@ RUN npm install -g npm@10.8.3
 
 ADD package.json .
 ADD app.js .
-ADD schemas/ticketsSchema.js .
-ADD schemas/projectsSchema.js .
-ADD tables/tableConfig.js .
-ADD tables/tableResolver.js .
-ADD data/tickets.json .
-ADD data/projects.json .
+ADD schemas .
+ADD routes .
+ADD data .
 
 RUN npm install
 

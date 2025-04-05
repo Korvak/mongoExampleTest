@@ -2,7 +2,7 @@
 const express = require("express");
 const { default: mongoose, mongo } = require("mongoose");
 
-const ReportTable = require("../schemas/usersSchema");
+const ConfigTable = require("../schemas/configSchema");
 
 // @ts-check
 
