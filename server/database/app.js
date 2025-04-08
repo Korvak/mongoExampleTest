@@ -1,38 +1,54 @@
-const express = require('express');
+const { GridFSBucket } = require('mongodb');
 const mongoose = require('mongoose');
-const fs = require('fs');
 const cors = require("cors");
+const express = require('express');
 
-const fileRouter = require("./routes/fileRouter");
-const reportRouter = require("./routes/reportRouter");
+const bindRoutes = require("./routes/routeResolver");
 
 const app = express();
 const port = 3030;
+const RUN_WITH_MONGO = true;
+
+
+const corsOptions = {
+  origin: '*'
+};
+
+app.use(cors());
 
 // app.use(require('body-parser').urlencoded({ extended: false }));
 app.use(express.json());       // to support JSON-encoded bodies
 app.use(express.urlencoded()); // to support URL-encoded bodies
 
-app.use(cors());
-app.options('*', cors()); //allows all, including same origin, must be changed when in prod
 
 const mongoDB = "mongodb://mongo_db:27017/";
 
 // to soft prevent SQL injections
 mongoose.set('strictQuery', true);
 
-mongoose.connect( mongoDB,{'dbName':'ticketsDB'}).then( async () => {
-    try {
-      app.use('/files', fileRouter);
-      app.use('/reports', reportRouter);
 
+
+
+if (RUN_WITH_MONGO) {
+  mongoose.connect( mongoDB,{'dbName':'testDB'}).then( async () => {
+    try {
+        // Create GridFS bucket using native connection
+      await bindRoutes(app, mongoose.connection.db);
       // Start the Express server
       app.listen(port, () => {
-        console.log(`Server is running on http://localhost:${port}`);
+        console.warn(`Server is running on http://localhost:${port}`);
       });
-      
     }
     catch(error) {
-      console.error("unable to insert data into TicketTable");
+      console.error(error.message);
     }
-});
+  });
+}
+else {
+  bindRoutes(app);
+  // Start the Express server
+  app.listen(port, () => {
+      console.warn(`Server is running on http://localhost:${port}`);
+    });
+}
+

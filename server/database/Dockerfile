@@ -5,7 +5,7 @@ RUN npm install -g npm@10.8.3
 ADD package.json .
 ADD app.js .
 ADD schemas .
-ADD routes .
+ADD tables .
 ADD data .
 
 RUN npm install
